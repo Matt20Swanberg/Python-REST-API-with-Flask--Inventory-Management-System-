@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from data import inventory
+from openfoodfacts import get_product_by_barcode
 
 app = Flask(__name__)
 
@@ -96,6 +97,46 @@ def delete_product(id):
     inventory.remove(product)
 
     return jsonify(), 204
+
+@app.route("/products/<barcode>", methods=["GET"])
+def find_product(barcode):
+    product = get_product_by_barcode(barcode)
+
+    if product is None:
+        return jsonify({"error": "product not found"}), 404
+
+    return jsonify(product), 200
+
+@app.route("/inventory/from-api/<barcode>", methods=["POST"])
+def add_product_from_api(barcode):
+    product = get_product_by_barcode(barcode)
+
+    if product is None:
+        return jsonify({"error": "product not found"}), 404
+
+    data = request.get_json()
+
+    required_fields = [
+        "price",
+        "stock"
+    ]
+
+    for field in required_fields:
+        value = data.get(field)
+
+        if  value is None or value == "":
+            return jsonify({"error": f"{field} missing"}), 400
+
+    product["price"] = data["price"]
+    product["stock"] = data["stock"]
+
+    new_id = max((p["id"]for p in inventory), default=0) + 1
+    product["id"] = new_id
+
+    inventory.append(product)
+
+    return jsonify(product), 201
+ 
 
 if __name__ == "__main__":
     app.run(debug=True)
