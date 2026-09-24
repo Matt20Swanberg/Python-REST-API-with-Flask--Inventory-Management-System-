@@ -4,8 +4,18 @@ from helpers import print_error
 
 BASE_URL = "http://127.0.0.1:5000"
 
+def print_product(product):
+    print(
+        f"Product: {product['product_name']}\n"
+        f"Brand: {product['brand']}\n"
+        f"Barcode: {product['barcode']}\n"
+        f"Ingredients: {product['ingredients']}"
+    )
+
 def view_inventory():
-    response = requests.get(f"{BASE_URL}/inventory")
+    response = requests.get(
+        f"{BASE_URL}/inventory"
+    )
 
     inventory = response.json()
 
@@ -59,8 +69,9 @@ def update_product(args):
 
 def delete_product(args):
     response = requests.delete(
-            f"{BASE_URL}/inventory/{args.id}"
-        )
+        f"{BASE_URL}/inventory/{args.id}"
+    )
+
     if response.status_code == 204:
         print(f"Product {args.id} deleted successfully.")
     else:
@@ -68,16 +79,12 @@ def delete_product(args):
 
 def find_product(args):
     response = requests.get(
-                f"{BASE_URL}/products/{args.barcode}"
-            )
+        f"{BASE_URL}/products/{args.barcode}"
+    )
+
     if response.status_code == 200:
         product = response.json()
-        print(
-            f"Product: {product['product_name']}\n"
-            f"Brand: {product['brand']}\n"
-            f"Barcode: {product['barcode']}\n"
-            f"Ingredients: {product['ingredients']}"
-        )
+        print_product(product)
     else:
         print_error(response)
 
@@ -96,6 +103,20 @@ def add_product_from_api(args):
         product = response.json()
         print(f"Product added: {product['product_name']} (ID: {product['id']})")
 
+    else:
+        print_error(response)
+
+def search_products(args):
+    response = requests.get(
+        f"{BASE_URL}/products/search/{args.product_name}"
+    )
+
+    if response.status_code == 200:
+        products = response.json()
+
+        for product in products:
+            print_product(product)
+            print()
     else:
         print_error(response)
 
@@ -143,6 +164,12 @@ if __name__ == "__main__":
     "--ingredients"
     ]:
         add_parser.add_argument(argument, required=True)
+
+
+    search_parser = subparsers.add_parser(
+        "search",
+        help="Search OpenFoodFacts by product name"
+    )
 
     add_parser.add_argument(
         "--price",
@@ -204,6 +231,11 @@ if __name__ == "__main__":
         required=True
     )
 
+    search_parser.add_argument(
+        "--product-name",
+        required=True
+    )
+
     args = parser.parse_args()
 
     if args.command == "view":
@@ -223,3 +255,6 @@ if __name__ == "__main__":
 
     elif args.command == "add-from-api":
         add_product_from_api(args)
+
+    elif args.command == "search":
+        search_products(args)

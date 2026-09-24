@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 
 from app import app
 from data import inventory
@@ -59,3 +60,21 @@ def test_delete_product():
     response = client.delete("/inventory/1")
 
     assert response.status_code == 204
+
+@patch("app.get_products_by_name")
+def test_search_products(mock_search):
+    mock_search.return_value = [
+        {
+            "barcode": "123456789",
+            "product_name": "Test Product",
+            "brand": "Test Brand",
+            "ingredients": "Test ingredients"
+        }
+    ]
+
+    client = app.test_client()
+
+    response = client.get("/products/search/Test Product")
+
+    assert response.status_code == 200
+    assert response.get_json()[0]["product_name"] == "Test Product"

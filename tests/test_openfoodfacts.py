@@ -1,5 +1,5 @@
 from unittest.mock import patch, Mock
-from openfoodfacts import get_product_by_barcode
+from openfoodfacts import get_product_by_barcode, get_products_by_name
 from requests.exceptions import RequestException
 
 
@@ -48,3 +48,28 @@ def test_api_request_failure(mock_get):
     product = get_product_by_barcode("3017624010701")
 
     assert product is None
+
+@patch("openfoodfacts.requests.get")
+def test_get_products_by_name(mock_get):
+    mock_response = Mock()
+
+    mock_response.json.return_value = {
+        "products": [
+            {
+                "code": "123456789",
+                "product_name": "Test Product",
+                "brands": "Test Brand",
+                "ingredients_text": "Test ingredients"
+            }
+        ]
+    }
+
+    mock_response.raise_for_status.return_value = None
+    mock_get.return_value = mock_response
+
+    products = get_products_by_name("Test Product")
+
+    assert products[0]["product_name"] == "Test Product"
+    assert products[0]["brand"] == "Test Brand"
+    assert products[0]["ingredients"] == "Test ingredients"
+    assert products[0]["barcode"] == "123456789"

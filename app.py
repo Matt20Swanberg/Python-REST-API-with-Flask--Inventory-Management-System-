@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from data import inventory
-from openfoodfacts import get_product_by_barcode
+from openfoodfacts import get_product_by_barcode, get_products_by_name
 from helpers import find_product_by_id, get_next_id, get_missing_field
 
 app = Flask(__name__)
@@ -135,6 +135,15 @@ def add_product_from_api(barcode):
     inventory.append(product)
 
     return jsonify(product), 201
+
+@app.route("/products/search/<product_name>", methods=["GET"])
+def search_products(product_name):
+    products = get_products_by_name(product_name)
+
+    if products is None:
+        return jsonify({"error": "product not found"}), 404
+
+    return jsonify(products), 200
  
 if __name__ == "__main__":
     app.run(debug=True)

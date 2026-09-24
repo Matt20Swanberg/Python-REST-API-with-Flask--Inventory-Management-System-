@@ -6,7 +6,8 @@ from cli import (
     add_product,
     update_product,
     delete_product,
-    find_product
+    find_product,
+    search_products
 )
 
 
@@ -125,3 +126,30 @@ def test_find_product(mock_get, capsys):
     output = capsys.readouterr().out
 
     assert "Nutella" in output
+
+@patch("cli.requests.get")
+def test_search_products(mock_get, capsys):
+    mock_response = Mock()
+
+    mock_response.status_code = 200
+    mock_response.json.return_value = [
+        {
+            "barcode": "123456789",
+            "product_name": "Test Product",
+            "brand": "Test Brand",
+            "ingredients": "Test ingredients"
+        }
+    ]
+
+    mock_get.return_value = mock_response
+
+    args = Namespace(
+        product_name="Test Product"
+    )
+
+    search_products(args)
+
+    output = capsys.readouterr().out
+
+    assert "Test Product" in output
+    assert "Test Brand" in output
