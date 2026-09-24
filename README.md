@@ -384,11 +384,11 @@ API routes can also be tested using Postman.
 ![Inventory Management System](./screenshots/inventory_management_system.png)
 
 ### CLI
-![CLI Example](./screenshots/cli_example1.png)
+![CLI Example - view](./screenshots/cli_example1.png)
 
-![CLI Example](./screenshots/cli_example2.png)
+![CLI Example - find by barcode](./screenshots/cli_example2.png)
 
-![CLI Example](./screenshots/cli_example3.png)
+![CLI Example - search by product name](./screenshots/cli_example3.png)
 
 ### Test Suite
 ![Test Results](./screenshots/test_suite.png)
