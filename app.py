@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from data import inventory
 from openfoodfacts import get_product_by_barcode
+from helpers import find_product_by_id, get_next_id, get_missing_field
 
 app = Flask(__name__)
 
@@ -14,10 +15,10 @@ def home():
 def get_inventory():
     return jsonify(inventory), 200
 
-@app.route("/inventory/<int:id>", )
+@app.route("/inventory/<int:id>")
 def get_product(id):
 
-    product = next((p for p in inventory if p['id'] == id), None)
+    product = find_product_by_id(id)
 
     if product is None:
         return jsonify({}), 404
@@ -37,13 +38,12 @@ def create_product():
         "stock"
     ]
 
-    for field in required_fields:
-        value = data.get(field)
+    missing_field = get_missing_field(data, required_fields)
 
-        if  value is None or value == "":
-            return jsonify({"error": f"{field} missing"}), 400
+    if missing_field:
+        return jsonify({"error": f"{missing_field} missing"}), 400
 
-    new_id = max((p["id"]for p in inventory), default=0) + 1
+    new_id = get_next_id()
 
     new_product = {
         "id": new_id,
@@ -67,9 +67,9 @@ def update_product(id):
     if not data:
         return jsonify({"error": "no change detected"}), 400
 
-    product = next((p for p in inventory if p["id"] == id), None)
+    product = find_product_by_id(id)
 
-    if not update_product:
+    if not product:
         return jsonify({"error": "product not found"}), 404
 
     updatable_fields = [
@@ -85,11 +85,11 @@ def update_product(id):
         if field in data:
             product[field] = data [field]
 
-    return jsonify(product)
+    return jsonify(product), 200
 
 @app.route("/inventory/<int:id>", methods=["DELETE"])
 def delete_product(id):
-    product = next((p for p in inventory if p["id"] == id), None)
+    product = find_product_by_id(id)
 
     if not product:
         return jsonify({"error": "product not found"}), 404
@@ -121,22 +121,20 @@ def add_product_from_api(barcode):
         "stock"
     ]
 
-    for field in required_fields:
-        value = data.get(field)
+    missing_field = get_missing_field(data, required_fields)
 
-        if  value is None or value == "":
-            return jsonify({"error": f"{field} missing"}), 400
+    if missing_field:
+        return jsonify({"error": f"{missing_field} missing"}), 400
 
     product["price"] = data["price"]
     product["stock"] = data["stock"]
 
-    new_id = max((p["id"]for p in inventory), default=0) + 1
+    new_id = get_next_id()
     product["id"] = new_id
 
     inventory.append(product)
 
     return jsonify(product), 201
  
-
 if __name__ == "__main__":
     app.run(debug=True)

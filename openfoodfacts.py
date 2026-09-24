@@ -8,9 +8,11 @@ def get_product_by_barcode(barcode):
         "User-Agent": "InventoryManagementSystem/1.0 (student@example.com)"
     }
 
-    response = requests.get(url, headers=headers)
-
-    response.raise_for_status()
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException:
+        return None
 
     data = response.json()
 
