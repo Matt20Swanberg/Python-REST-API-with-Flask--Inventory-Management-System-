@@ -417,6 +417,7 @@ The primary local inventory is stored in a Python list, requiring:
 
 ```text
 O(n)
+```
 
 
 ## Author
