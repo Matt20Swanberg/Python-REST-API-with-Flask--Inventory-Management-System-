@@ -1,3 +1,5 @@
+# Simulated in-memory inventory database
+# Each product contains a unique ID along with product and stock information
 inventory = [
     {
         "id": 1,
