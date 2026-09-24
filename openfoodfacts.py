@@ -49,8 +49,6 @@ def get_products_by_name(product_name):
         "search_simple": 1
     }
 
-    response = requests.get(url, params=params)
-
     headers = {
         "User-Agent": "InventoryManagementSystem/1.0 (student@example.com)"
     }
