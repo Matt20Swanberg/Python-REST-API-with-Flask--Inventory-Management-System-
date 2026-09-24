@@ -7,7 +7,7 @@ FIELD_MAPPING = {
 }
 
 def get_product_by_barcode(barcode):
-    url = f"https://world.openfoodfacts.net/api/v3.6/product/{barcode}"
+    url = f"https://world.openfoodfacts.org/api/v3/product/{barcode}"
 
 
     headers = {

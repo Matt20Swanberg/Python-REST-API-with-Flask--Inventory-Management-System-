@@ -21,7 +21,7 @@ def get_product(id):
     product = find_product_by_id(id)
 
     if product is None:
-        return jsonify({}), 404
+        return jsonify({"error": "product not found"}), 404
 
     return jsonify(product), 200
 
@@ -83,7 +83,7 @@ def update_product(id):
 
     for field in updatable_fields:
         if field in data:
-            product[field] = data [field]
+            product[field] = data[field]
 
     return jsonify(product), 200
 
