@@ -1,5 +1,6 @@
 import argparse
 import requests
+from helpers import print_error
 
 BASE_URL = "http://127.0.0.1:5000"
 
@@ -33,8 +34,7 @@ def add_product(args):
         print(f"Product added: {product['product_name']} (ID: {product['id']})")
 
     else:
-        error = response.json()
-        print(f"Error: {error['error']}")
+        print_error(response)
 
 def update_product(args):
     product_data = {}
@@ -55,8 +55,7 @@ def update_product(args):
         print(f"Product updated: {product['product_name']} | Price: ${product['price']} | Stock: {product['stock']}")
 
     else:
-        error = response.json()
-        print(f"Error: {error['error']}")
+        print_error(response)
 
 def delete_product(args):
     response = requests.delete(
@@ -65,8 +64,7 @@ def delete_product(args):
     if response.status_code == 204:
         print(f"Product {args.id} deleted successfully.")
     else:
-        error = response.json()
-        print(f"Error: {error['error']}")
+        print_error(response)
 
 def find_product(args):
     response = requests.get(
@@ -81,8 +79,7 @@ def find_product(args):
             f"Ingredients: {product['ingredients']}"
         )
     else:
-        error = response.json()
-        print(f"Error: {error['error']}")
+        print_error(response)
 
 def add_product_from_api(args):
     product_data = {
@@ -100,8 +97,7 @@ def add_product_from_api(args):
         print(f"Product added: {product['product_name']} (ID: {product['id']})")
 
     else:
-        error = response.json()
-        print(f"Error: {error['error']}")
+        print_error(response)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -140,23 +136,13 @@ if __name__ == "__main__":
         help="Add an OpenFoodFacts product to inventory"
     )
 
-    add_parser.add_argument(
-        "--barcode",
-        required=True
-    )
-
-    add_parser.add_argument(
-        "--product-name",
-        required=True
-    )
-    add_parser.add_argument(
-        "--brand",
-        required=True
-    )
-    add_parser.add_argument(
-        "--ingredients",
-        required=True
-    )
+    for argument in [
+    "--barcode",
+    "--product-name",
+    "--brand",
+    "--ingredients"
+    ]:
+        add_parser.add_argument(argument, required=True)
 
     add_parser.add_argument(
         "--price",

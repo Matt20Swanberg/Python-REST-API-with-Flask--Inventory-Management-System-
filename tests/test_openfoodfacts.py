@@ -1,6 +1,6 @@
 from unittest.mock import patch, Mock
-
 from openfoodfacts import get_product_by_barcode
+from requests.exceptions import RequestException
 
 
 @patch("openfoodfacts.requests.get")
@@ -38,5 +38,13 @@ def test_product_not_found(mock_get):
     mock_get.return_value = mock_response
 
     product = get_product_by_barcode("0000000000000")
+
+    assert product is None
+
+@patch("openfoodfacts.requests.get")
+def test_api_request_failure(mock_get):
+    mock_get.side_effect = RequestException
+
+    product = get_product_by_barcode("3017624010701")
 
     assert product is None
