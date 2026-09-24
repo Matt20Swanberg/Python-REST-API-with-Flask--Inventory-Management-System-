@@ -73,9 +73,9 @@ def find_product(args):
     if response.status_code == 200:
         product = response.json()
         print(
-            f"Product: {product['product_name']}\n",
-            f"Brand: {product['brand']}\n",
-            f"Barcode: {product['barcode']}\n",
+            f"Product: {product['product_name']}\n"
+            f"Brand: {product['brand']}\n"
+            f"Barcode: {product['barcode']}\n"
             f"Ingredients: {product['ingredients']}"
         )
     else:
