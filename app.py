@@ -7,17 +7,32 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
+    """
+    Return a welcome message for the Inventory Management System API
+    """
     return jsonify({
         "message": "Welcome to the Inventory Management System API"
     }), 200
 
 @app.route("/inventory", methods=["GET"])
 def get_inventory():
+    """
+    Return all inventory items
+    """
     return jsonify(inventory), 200
 
 @app.route("/inventory/<int:id>")
 def get_product(id):
+    """
+    Return a single inventory item by ID
 
+    Args:
+        id (int): The inventory item ID
+
+    Returns:
+        JSON response containing the product if found,
+        otherwise a 404 error response
+    """
     product = find_product_by_id(id)
 
     if product is None:
@@ -27,6 +42,16 @@ def get_product(id):
 
 @app.route("/inventory", methods=["POST"])
 def create_product():
+    """
+    Create a new inventory item from JSON request data
+
+    Required fields:
+        barcode, product_name, brand, ingredients, price, stock
+
+    Returns:
+        JSON response containing the created product with a 201 status,
+        or a 400 error if a required field is missing
+    """
     data = request.get_json()
 
     required_fields = [
@@ -62,6 +87,17 @@ def create_product():
 
 @app.route("/inventory/<int:id>", methods=["PATCH"])
 def update_product(id):
+    """
+    Update one or more fields on an existing inventory item
+
+    Args:
+        id (int): The inventory item ID
+
+    Returns:
+        JSON response containing the updated product,
+        a 400 error if no update data is provided,
+        or a 404 error if the product does not exist
+    """
     data = request.get_json()
 
     if not data:
@@ -89,6 +125,16 @@ def update_product(id):
 
 @app.route("/inventory/<int:id>", methods=["DELETE"])
 def delete_product(id):
+    """
+    Delete an inventory item by ID
+
+    Args:
+        id (int): The inventory item ID
+
+    Returns:
+        A 204 response when deletion succeeds,
+        or a 404 error if the product does not exist
+    """
     product = find_product_by_id(id)
 
     if not product:
@@ -100,6 +146,16 @@ def delete_product(id):
 
 @app.route("/products/<barcode>", methods=["GET"])
 def find_product(barcode):
+    """
+    Retrieve a product from OpenFoodFacts using its barcode
+
+    Args:
+        barcode (str): The barcode to search for
+
+    Returns:
+        JSON response containing the external product data,
+        or a 404 error if no product is found
+    """
     product = get_product_by_barcode(barcode)
 
     if product is None:
@@ -109,6 +165,20 @@ def find_product(barcode):
 
 @app.route("/inventory/from-api/<barcode>", methods=["POST"])
 def add_product_from_api(barcode):
+    """
+    Retrieve a product from OpenFoodFacts and add it to inventory
+
+    The product details come from OpenFoodFacts, while price and stock
+    are provided in the JSON request body
+
+    Args:
+        barcode (str): The OpenFoodFacts barcode to retrieve
+
+    Returns:
+        JSON response containing the newly created inventory item,
+        a 400 error if price or stock is missing,
+        or a 404 error if the external product cannot be found
+    """
     product = get_product_by_barcode(barcode)
 
     if product is None:
@@ -138,6 +208,16 @@ def add_product_from_api(barcode):
 
 @app.route("/products/search/<product_name>", methods=["GET"])
 def search_products(product_name):
+    """
+    Search OpenFoodFacts for products by product name.
+
+    Args:
+        product_name (str): The product name to search for.
+
+    Returns:
+        JSON response containing up to five matching products,
+        or a 404 error if no matches are found.
+    """
     products = get_products_by_name(product_name)
 
     if products is None:
