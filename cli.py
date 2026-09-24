@@ -102,131 +102,138 @@ def add_product_from_api(args):
     else:
         error = response.json()
         print(f"Error: {error['error']}")
-        
-parser = argparse.ArgumentParser(description="Inventory Management System CLI")
 
-subparsers = parser.add_subparsers(dest="command")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Inventory Management System CLI"
+    )
 
-view_parser = subparsers.add_parser(
-    "view",
-    help="View all inventory items"
-)
+    subparsers = parser.add_subparsers(dest="command")
 
-add_parser = subparsers.add_parser(
-    "add",
-    help="Add a new inventory item"
-)
+    view_parser = subparsers.add_parser(
+        "view",
+        help="View all inventory items"
+    )
 
-update_parser = subparsers.add_parser(
-    "update",
-    help="Update an inventory item"
-)
+    add_parser = subparsers.add_parser(
+        "add",
+        help="Add a new inventory item"
+    )
 
-delete_parser = subparsers.add_parser(
-    "delete",
-    help="Delete an inventory item"
-)
+    update_parser = subparsers.add_parser(
+        "update",
+        help="Update an inventory item"
+    )
 
-find_parser = subparsers.add_parser(
-    "find",
-    help="Find a product using OpenFoodFacts"
-)
+    delete_parser = subparsers.add_parser(
+        "delete",
+        help="Delete an inventory item"
+    )
 
-add_api_parser = subparsers.add_parser(
-    "add-from-api",
-    help="Add an OpenFoodFacts product to inventory"
-)
+    find_parser = subparsers.add_parser(
+        "find",
+        help="Find a product using OpenFoodFacts"
+    )
 
-add_parser.add_argument(
-    "--barcode",
-    required=True
-)
-add_parser.add_argument(
-    "--product-name",
-    required=True
-)
-add_parser.add_argument(
-    "--brand",
-    required=True
-)
-add_parser.add_argument(
-    "--ingredients",
-    required=True
-)
-add_parser.add_argument(
-    "--price",
-    type=float,
-    required=True
-)
-add_parser.add_argument(
-    "--stock",
-    type=int,
-    required=True
-)
+    add_api_parser = subparsers.add_parser(
+        "add-from-api",
+        help="Add an OpenFoodFacts product to inventory"
+    )
 
-update_parser.add_argument(
-    "--id",
-    type=int,
-    required=True
-)
+    add_parser.add_argument(
+        "--barcode",
+        required=True
+    )
 
-update_parser.add_argument(
-    "--price",
-    type=float,
-    required=False
-)
-update_parser.add_argument(
-    "--stock",
-    type=int,
-    required=False
-)
+    add_parser.add_argument(
+        "--product-name",
+        required=True
+    )
+    add_parser.add_argument(
+        "--brand",
+        required=True
+    )
+    add_parser.add_argument(
+        "--ingredients",
+        required=True
+    )
 
-delete_parser.add_argument(
-    "--id",
-    type=int,
-    required=True
-)
+    add_parser.add_argument(
+        "--price",
+        type=float,
+        required=True
+    )
 
-find_parser.add_argument(
-    "--barcode",
-    type=str,
-    required=True
-)
+    add_parser.add_argument(
+        "--stock",
+        type=int,
+        required=True
+    )
 
-add_api_parser.add_argument(
-    "--barcode",
-    type=str,
-    required=True
-)
+    update_parser.add_argument(
+        "--id",
+        type=int,
+        required=True
+    )
 
-add_api_parser.add_argument(
-    "--price",
-    type=float,
-    required=True
-)
+    update_parser.add_argument(
+        "--price",
+        type=float,
+        required=False
+    )
 
-add_api_parser.add_argument(
-    "--stock",
-    type=int,
-    required=True
-)
+    update_parser.add_argument(
+        "--stock",
+        type=int,
+        required=False
+    )
 
-args = parser.parse_args()
+    delete_parser.add_argument(
+        "--id",
+        type=int,
+        required=True
+    )
 
-if args.command == "view":
-    view_inventory()
+    find_parser.add_argument(
+        "--barcode",
+        type=str,
+        required=True
+    )
 
-elif args.command == "add":
-    add_product(args)
+    add_api_parser.add_argument(
+        "--barcode",
+        type=str,
+        required=True
+    )
 
-elif args.command == "update":
-    update_product(args)
+    add_api_parser.add_argument(
+        "--price",
+        type=float,
+        required=True
+    )
 
-elif args.command == "delete":
-    delete_product(args)
+    add_api_parser.add_argument(
+        "--stock",
+        type=int,
+        required=True
+    )
 
-elif args.command == "find":
-    find_product(args)
+    args = parser.parse_args()
 
-elif args.command == "add-from-api":
-    add_product_from_api(args)
+    if args.command == "view":
+        view_inventory()
+
+    elif args.command == "add":
+        add_product(args)
+
+    elif args.command == "update":
+        update_product(args)
+
+    elif args.command == "delete":
+        delete_product(args)
+
+    elif args.command == "find":
+        find_product(args)
+
+    elif args.command == "add-from-api":
+        add_product_from_api(args)
